@@ -35,6 +35,7 @@ public class MoveXYHeading extends CommandBase {
   public void initialize() {
 
     swerve.resetOdometry();
+    swerve.zeroGyro();
     lastTimestamp = Timer.getFPGATimestamp();
     lastErrorH = 0;
   }
@@ -42,12 +43,6 @@ public class MoveXYHeading extends CommandBase {
   @Override
   public void execute() {
 
-    SmartDashboard.putNumber("Distance X", distanceX);
-    SmartDashboard.putNumber("Difference X", swerve.getPose().getX());
-    SmartDashboard.putNumber("Distance Y", distanceY);
-    SmartDashboard.putNumber("Difference Y", swerve.getPose().getY());
-    SmartDashboard.putNumber("Distance H", distanceH);
-    SmartDashboard.putNumber("Difference H", swerve.getYaw().getDegrees());
 
     double speedX = 0;
     double speedY = 0;
@@ -55,24 +50,15 @@ public class MoveXYHeading extends CommandBase {
 
     
     finish = true;
-    if(swerve.getPose().getX()<distanceX)
-    {finish = false;}
-    if(swerve.getPose().getY()<distanceY)
-    {finish = false;}
-    if(swerve.getYaw().getDegrees()<distanceH)
-    {finish = false;}
-
-    
-
-    double xVelocity   = Math.pow(speedX, 3);
-    double yVelocity   = Math.pow(speedY, 3);
-    double angVelocity = Math.pow(heading, 3);
-  
-    // Drive using raw values.
-    swerve.drive(new Translation2d(xVelocity * swerve.maximumSpeed, yVelocity * swerve.maximumSpeed),
-                 angVelocity ,
-                 true ,false);
-
+    if(Math.abs(swerve.getPose().getX())>Math.abs(distanceX)){
+      finish = false;
+    }
+    if(Math.abs(swerve.getPose().getY())>Math.abs(distanceY)){
+      finish = false;
+    }
+    if(Math.abs(swerve.getYaw().getDegrees())>Math.abs(distanceH)){
+      finish = false;
+    }
 
     // Cálculos -PID-
     double sensorX = swerve.getPose().getX();
@@ -105,7 +91,8 @@ public class MoveXYHeading extends CommandBase {
     speedX = Auton.kp * errorX + Auton.ki * errorSumX + Auton.kd * errorRateX;
     speedY = Auton.kp * errorY + Auton.ki * errorSumY + Auton.kd * errorRateY;
     heading = Auton.kpH * errorH + Auton.kiH * errorSumH + Auton.kdH * errorRateH;
-
+ // Drive using raw values.
+    swerve.drive(new Translation2d(speedX, speedY), heading , false ,false);
     lastTimestamp = Timer.getFPGATimestamp();
 
     lastErrorX = errorX;

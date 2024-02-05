@@ -9,15 +9,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
-public class Intake extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
 
-  private static Intake instance;
+  private static IntakeSubsystem instance;
   
   // Motor ta ai
   CANSparkMax  motor = new CANSparkMax(IntakeConstants.kIntakeMotor,MotorType.kBrushless);
   
   // Intake ta ai tambem
-  public Intake() {
+  public IntakeSubsystem() {
 
     //Configuro para  que o  motor se mantenha estatico quando em 0
     motor.setIdleMode(IdleMode.kCoast);
@@ -30,9 +30,9 @@ public class Intake extends SubsystemBase {
     
     
   }
-  public static Intake getInstance() {
+  public static IntakeSubsystem getInstance() {
     if (instance == null) {
-        instance = new Intake();
+        instance = new IntakeSubsystem();
     }
     return instance;
 }

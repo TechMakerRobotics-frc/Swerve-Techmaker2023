@@ -15,8 +15,8 @@ public final class Constants
 
     public static final class Auton
     {
-        public static final double kp = 0.75;
-        public static final double ki = 0.38;
+        public static final double kp = 1.5;
+        public static final double ki = 0.8;
         public static final double kd = 0;
         
         // P = 0.46 - I = 0.17 - D = 0.01 
@@ -26,11 +26,6 @@ public final class Constants
         public static final double kdH = 0;
 
         // P = 0 - I = 0 - D = 0 
-
-
-       /* velForward = drivePID.calculate(limelight.getALimelight(), strafeOffSet);
-        velStrafe = strafePID.calculate(limelight.getXLimelight(), strafeOffSet);
-        velGiro = rotationPID.calculate(limelight.getYaw(),rotationOffset); */
 
 
         public static final double MAX_SPEED        = 4;

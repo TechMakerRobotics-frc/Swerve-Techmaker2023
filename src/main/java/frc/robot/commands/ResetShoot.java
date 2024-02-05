@@ -5,15 +5,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ResetShoot extends InstantCommand {
-  private final Intake intake = Intake.getInstance();
-  private final Shooter shooter = Shooter.getInstance();
+  private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
+  private final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
   public ResetShoot() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(intake);

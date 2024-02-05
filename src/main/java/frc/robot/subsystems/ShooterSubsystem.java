@@ -9,15 +9,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
-public class Shooter extends SubsystemBase {
-  private static Shooter instance;
+public class ShooterSubsystem extends SubsystemBase {
+  private static ShooterSubsystem instance;
   boolean extended = false;
 
   //Dois motores, um de  cada lado 
   CANSparkMax  motorDown = new CANSparkMax(ShooterConstants.kShooterDownMotor,MotorType.kBrushless);
   CANSparkMax  motorUp = new CANSparkMax (ShooterConstants.kShooterUpMotor,MotorType.kBrushless);
   private double motorPower = 0;
-  public Shooter() {
+  public ShooterSubsystem() {
     
     //Limpo qualquer configuração  inicial dos modulos
     motorDown.restoreFactoryDefaults();
@@ -32,9 +32,9 @@ public class Shooter extends SubsystemBase {
     motorUp.setInverted(false);
     
   }
-  public static Shooter getInstance() {
+  public static ShooterSubsystem getInstance() {
     if (instance == null) {
-      instance = new Shooter();
+      instance = new ShooterSubsystem();
     }
     return instance;
   }

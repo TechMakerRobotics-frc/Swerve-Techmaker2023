@@ -73,11 +73,10 @@ public class MoveXYHeading extends CommandBase {
     double xVelocity   = Math.pow(speedX, 3);
     double yVelocity   = Math.pow(speedY, 3);
     double angVelocity = Math.pow(speedX, 3);
-  
+    
     // Drive using raw values.
     swerve.drive(new Translation2d(xVelocity * swerve.maximumSpeed, yVelocity * swerve.maximumSpeed),
-                 angVelocity ,
-                 true ,false);
+                 angVelocity , false ,false);
     
   }
 
