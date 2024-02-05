@@ -1,6 +1,9 @@
 
 package frc.robot.commands.swervedrive.auto;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -9,110 +12,42 @@ import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.Timer;
 
 public class MoveXYHeading extends CommandBase {
-  
-  double distanceX, distanceY, distanceH;
+
+  double distanceX, distanceY, heading;
   SwerveSubsystem swerve;
-  boolean finish = false;
-  double lastTimestamp;
-  double lastErrorX;
-  double lastErrorY;
-  double lastErrorH;
-  public MoveXYHeading(double distanceX, double distanceY,double heading, SwerveSubsystem swerve) {
-    
+  PIDController pidX, pidY, pidHeading;
+
+  public MoveXYHeading(double distanceX, double distanceY, double heading, SwerveSubsystem swerve) {
+
     this.distanceX = distanceX;
     this.distanceY = distanceY;
-    //this.distanceH = distanceH;
-    
-    distanceH = heading;
-    SmartDashboard.putNumber("Distance Xi", distanceX);
-    SmartDashboard.putNumber("Distance Yi", distanceY);
-    SmartDashboard.putNumber("Distance Hi", distanceH);
-
+    this.heading = heading;
+    pidX = new PIDController(Auton.kp, Auton.ki, Auton.kd);
+    pidY = new PIDController(Auton.kp, Auton.ki, Auton.kd);
+    pidX.setSetpoint(distanceX);
+    pidY.setSetpoint(distanceY);
     this.swerve = swerve;
+    addRequirements(swerve);
 
   }
+
   @Override
   public void initialize() {
 
-    swerve.resetOdometry();
+    swerve.resetOdometry(new Pose2d(0,0, new Rotation2d(0)));
     swerve.zeroGyro();
-    lastTimestamp = Timer.getFPGATimestamp();
-    lastErrorX = 0;
-    lastErrorY = 0;
-    lastErrorH = 0;
   }
 
   @Override
   public void execute() {
 
-
-    double speedX = 0;
-    double speedY = 0;
-    double heading = 0;
-
-    
-    finish = true;
-    if(Math.abs(swerve.getPose().getX())>Math.abs(distanceX)){
-      finish = false;
-    }
-    if(Math.abs(swerve.getPose().getY())>Math.abs(distanceY)){
-      finish = false;
-    }
-    if(Math.abs(swerve.getYaw().getDegrees())>Math.abs(distanceH)){
-      finish = false;
-    }
-
-    // Cálculos -PID-
-    double sensorX = swerve.getPose().getX();
-    double errorX = distanceX - sensorX;
-    speedX = Auton.kp*errorX;
-
-    double sensorY = swerve.getPose().getY();
-    double errorY = distanceY - sensorY;
-    speedY = Auton.kp*errorY;
-
-    double sensorH = swerve.getYaw().getDegrees();
-    double errorH = distanceH - sensorH;
-    heading = Auton.kpH*errorH;
-
-
-    double errorSumX = 0;
-    double errorSumY = 0;
-    double errorSumH = 0;   
-
-    double dt = Timer.getFPGATimestamp() - lastTimestamp;
-
-    double errorRateX = (errorX - lastErrorX) / dt;
-    double errorRateY = (errorY - lastErrorY) / dt;
-    double errorRateH = (errorH - lastErrorH) / dt;
-
-    errorSumX += errorX * dt;
-    errorSumY += errorY * dt;
-    errorSumH += errorH * dt;
-
-    speedX = Auton.kp * errorX + Auton.ki * errorSumX + Auton.kd * errorRateX;
-    speedY = Auton.kp * errorY + Auton.ki * errorSumY + Auton.kd * errorRateY;
-    heading = Auton.kpH * errorH + Auton.kiH * errorSumH + Auton.kdH * errorRateH;
- // Drive using raw values.
-    swerve.drive(new Translation2d(speedX, speedY), heading , false ,false);
-    lastTimestamp = Timer.getFPGATimestamp();
-
-    lastErrorX = errorX;
-    lastErrorY = errorY;
-    lastErrorH = errorH;
-    double xVelocity   = Math.pow(speedX, 3);
-    double yVelocity   = Math.pow(speedY, 3);
-    //velocidade do giro
-    double angVelocity = Math.pow(heading, 3);
-    
+    double speedX = pidX.calculate(swerve.getPose().getX());
+    double speedY = pidY.calculate(swerve.getPose().getY());
   
-    // Drive using raw values.
-    swerve.drive(new Translation2d(xVelocity * swerve.maximumSpeed, yVelocity * swerve.maximumSpeed),
-                 angVelocity,
-                 true ,false);
+    swerve.drive(new Translation2d(speedX, speedY), heading, true, false);
+   
   }
 
-  
   @Override
   public void end(boolean interrupted) {
     swerve.lock();
@@ -121,6 +56,12 @@ public class MoveXYHeading extends CommandBase {
   // Retornar finish para terminar.
   @Override
   public boolean isFinished() {
-    return finish;
+    if (Math.abs(swerve.getYaw().getDegrees()) > Math.abs(heading)) {
+      return false;
+    }
+    if(pidX.atSetpoint() && pidY.atSetpoint()){
+      return true;
+    }
+    return false;
   }
 }
