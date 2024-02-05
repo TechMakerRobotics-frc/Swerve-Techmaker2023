@@ -1,93 +1,124 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands.swervedrive.auto;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-//import frc.robot.Constants.Auton;
+import frc.robot.Constants.Auton;
 import frc.robot.subsystems.SwerveSubsystem;
-import swervelib.SwerveController;
+import edu.wpi.first.wpilibj.Timer;
 
 public class MoveXYHeading extends CommandBase {
-  /** Creates a new MoveStraight. */
-  double distanceX, distanceY, direction;
+  
+  double distanceX, distanceY, distanceH;
   SwerveSubsystem swerve;
   boolean finish = false;
-  private final SwerveController controller;
+  double lastTimestamp;
+  double lastErrorX;
+  double lastErrorY;
+  double lastErrorH;
   public MoveXYHeading(double distanceX, double distanceY,double heading, SwerveSubsystem swerve) {
-    // Use addRequirements() here to declare subsystem dependencies.
+    
     this.distanceX = distanceX;
     this.distanceY = distanceY;
-    direction = heading;
+    //this.distanceH = distanceH;
+    
+    distanceH = heading;
     SmartDashboard.putNumber("Distance Xi", distanceX);
     SmartDashboard.putNumber("Distance Yi", distanceY);
+    SmartDashboard.putNumber("Distance Hi", distanceH);
+
     this.swerve = swerve;
-    this.controller = swerve.getSwerveController();
 
-    //pidControllerX = new PIDController(0.088, 0.04, 0);
   }
-
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
     swerve.resetOdometry();
-    SmartDashboard.putString("O Johnny é calvo?", "NAO");
+    swerve.zeroGyro();
+    lastTimestamp = Timer.getFPGATimestamp();
+    lastErrorX = 0;
+    lastErrorY = 0;
+    lastErrorH = 0;
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("Distance X", distanceX);
-    SmartDashboard.putNumber("Difference X", swerve.getPose().getX());
-    SmartDashboard.putNumber("Distance Y", distanceY);
-    SmartDashboard.putNumber("Difference Y", swerve.getPose().getY());
-    SmartDashboard.putNumber("Direction", direction);
-    SmartDashboard.putNumber("Difference Direction", swerve.getYaw().getDegrees());
+
+
     double speedX = 0;
     double speedY = 0;
     double heading = 0;
 
-    //double errorH;
-    //double errorRateH;
-    //double errorSumH;
-
     
     finish = true;
-    if(swerve.getPose().getX()<distanceX)
-    {
-      speedX = 0.7;
+    if(Math.abs(swerve.getPose().getX())>Math.abs(distanceX)){
       finish = false;
+    }
+    if(Math.abs(swerve.getPose().getY())>Math.abs(distanceY)){
+      finish = false;
+    }
+    if(Math.abs(swerve.getYaw().getDegrees())>Math.abs(distanceH)){
+      finish = false;
+    }
 
-    }
-    if(swerve.getPose().getY()<distanceY){
-      speedY = 0.7;
-      finish = false;
-    }
-    if(swerve.getYaw().getDegrees()<direction){
-      heading = 1;
-      finish = false;
-    }
+    // Cálculos -PID-
+    double sensorX = swerve.getPose().getX();
+    double errorX = distanceX - sensorX;
+    speedX = Auton.kp*errorX;
+
+    double sensorY = swerve.getPose().getY();
+    double errorY = distanceY - sensorY;
+    speedY = Auton.kp*errorY;
+
+    double sensorH = swerve.getYaw().getDegrees();
+    double errorH = distanceH - sensorH;
+    heading = Auton.kpH*errorH;
+
+
+    double errorSumX = 0;
+    double errorSumY = 0;
+    double errorSumH = 0;   
+
+    double dt = Timer.getFPGATimestamp() - lastTimestamp;
+
+    double errorRateX = (errorX - lastErrorX) / dt;
+    double errorRateY = (errorY - lastErrorY) / dt;
+    double errorRateH = (errorH - lastErrorH) / dt;
+
+    errorSumX += errorX * dt;
+    errorSumY += errorY * dt;
+    errorSumH += errorH * dt;
+
+    speedX = Auton.kp * errorX + Auton.ki * errorSumX + Auton.kd * errorRateX;
+    speedY = Auton.kp * errorY + Auton.ki * errorSumY + Auton.kd * errorRateY;
+    heading = Auton.kpH * errorH + Auton.kiH * errorSumH + Auton.kdH * errorRateH;
+ // Drive using raw values.
+    swerve.drive(new Translation2d(speedX, speedY), heading , false ,false);
+    lastTimestamp = Timer.getFPGATimestamp();
+
+    lastErrorX = errorX;
+    lastErrorY = errorY;
+    lastErrorH = errorH;
     double xVelocity   = Math.pow(speedX, 3);
     double yVelocity   = Math.pow(speedY, 3);
-    double angVelocity = Math.pow(speedX, 3);
+    //velocidade do giro
+    double angVelocity = Math.pow(heading, 3);
     
+  
     // Drive using raw values.
     swerve.drive(new Translation2d(xVelocity * swerve.maximumSpeed, yVelocity * swerve.maximumSpeed),
-                 angVelocity , false ,false);
-    
+                 angVelocity,
+                 true ,false);
   }
 
-  // Called once the command ends or is interrupted.
+  
   @Override
   public void end(boolean interrupted) {
     swerve.lock();
-    SmartDashboard.putString("O Johnny é calvo?", "SIM");
   }
 
-  // Returns true when the command should end.
+  // Retornar finish para terminar.
   @Override
   public boolean isFinished() {
     return finish;

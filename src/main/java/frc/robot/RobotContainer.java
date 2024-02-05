@@ -95,8 +95,8 @@ public class RobotContainer
    */
   public Command getAutonomousCommand() {
     
-    return new Auto3Notes(drivebase);
-    //return new MoveXY(0,-1 , drivebase);
+    //return new Auto3Notes(drivebase);
+    return new MoveXYHeading(0,-1,45, drivebase);
   }
 
 

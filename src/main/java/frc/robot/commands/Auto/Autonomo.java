@@ -3,7 +3,7 @@ package frc.robot.commands.Auto;
 
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.swervedrive.MoveAuto.MoveXYHeading;
+import frc.robot.commands.swervedrive.auto.MoveXYHeading;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 

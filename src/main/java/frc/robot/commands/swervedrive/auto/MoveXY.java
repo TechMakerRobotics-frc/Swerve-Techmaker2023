@@ -21,7 +21,8 @@ public class MoveXY extends CommandBase {
   double lastTimestamp;
   double lastErrorX = 0;
   double lastErrorY = 0;
-
+  double errorSumX = 0;
+    double errorSumY = 0;
   public MoveXY(double distanceX, double distanceY, SwerveSubsystem swerve) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.distanceX = distanceX;
@@ -70,15 +71,7 @@ public class MoveXY extends CommandBase {
     double errorY = distanceY - sensorY;
     speedY = Auton.kp*errorY;
 
-    double xVelocity   = Math.pow(speedX, 3);
-    double yVelocity   = Math.pow(speedY, 3);
-    //velocidade do giro
-    double angVelocity = Math.pow(0, 3);
-
-
-
-    double errorSumX = 0;
-    double errorSumY = 0;
+  
     
     double dt = Timer.getFPGATimestamp() - lastTimestamp;
     double errorRateX = (errorX - lastErrorX) / dt;
@@ -93,16 +86,10 @@ public class MoveXY extends CommandBase {
     lastErrorX = errorX;
     lastErrorY = errorY;
 
-    SmartDashboard.putNumber("sensorX", sensorX);
-    SmartDashboard.putNumber("errorX", errorX);
-    SmartDashboard.putNumber("speedX", speedX);
-    SmartDashboard.putNumber("xVelocity", xVelocity);
-  
-    SmartDashboard.putNumber("sensorY", sensorY);
-    SmartDashboard.putNumber("errorY", errorY);
-    SmartDashboard.putNumber("speedY", speedY);
-    SmartDashboard.putNumber("yVelocity", yVelocity);
-    
+    double xVelocity   = Math.pow(speedX, 3);
+    double yVelocity   = Math.pow(speedY, 3);
+    //velocidade do giro
+    double angVelocity = Math.pow(0, 3);
     
   
     // Drive using raw values.
