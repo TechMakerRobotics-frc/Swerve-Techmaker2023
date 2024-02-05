@@ -1,6 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands.swervedrive.auto;
 
@@ -14,21 +11,25 @@ import frc.robot.Constants.Auton;
 
 public class MoveXY extends CommandBase {
   /** Creates a new MoveStraight. */
-  double distanceX, distanceY;
+  double distanceX, distanceY, heading;
   SwerveSubsystem swerve;
   boolean finish = false;
   private final SwerveController controller;
   double lastTimestamp;
   double lastErrorX = 0;
   double lastErrorY = 0;
+  double lastErrorH = 0;
   double errorSumX = 0;
-    double errorSumY = 0;
-  public MoveXY(double distanceX, double distanceY, SwerveSubsystem swerve) {
+  double errorSumY = 0;
+  double errorSumH = 0;
+  public MoveXY(double distanceX, double distanceY, double heading, SwerveSubsystem swerve) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.distanceX = distanceX;
     this.distanceY = distanceY;
+    this.heading = heading;
     SmartDashboard.putNumber("Distance Xi", distanceX);
     SmartDashboard.putNumber("Distance Yi", distanceY);
+    SmartDashboard.putNumber("Giro", heading);
     this.swerve = swerve;
     this.controller = swerve.getSwerveController();
   }
@@ -41,6 +42,7 @@ public class MoveXY extends CommandBase {
     lastTimestamp = Timer.getFPGATimestamp();
     lastErrorX = 0;
     lastErrorY = 0;
+    lastErrorH = 0;
 
   }
 
@@ -50,6 +52,7 @@ public class MoveXY extends CommandBase {
     
     double speedX = 0;
     double speedY = 0;
+    double speedH = 0;
     
     
     finish = true;
@@ -58,6 +61,10 @@ public class MoveXY extends CommandBase {
       finish = false;
     }
     if(Math.abs(swerve.getPose().getY())<Math.abs(distanceY))
+    {
+      finish = false;
+    }
+    if(Math.abs(swerve.getYaw().getDegrees())<Math.abs(heading))
     {
       finish = false;
     }
@@ -71,25 +78,32 @@ public class MoveXY extends CommandBase {
     double errorY = distanceY - sensorY;
     speedY = Auton.kp*errorY;
 
+    double sensorH = swerve.getYaw().getDegrees();
+    double errorH = heading - sensorH;
+    speedH = Auton.kpH*errorH;
+
   
     
     double dt = Timer.getFPGATimestamp() - lastTimestamp;
     double errorRateX = (errorX - lastErrorX) / dt;
     double errorRateY = (errorY - lastErrorY) / dt;
+    double errorRateH = (errorH - lastErrorH) / dt;
 
     errorSumX += errorX * dt;
     errorSumY += errorY * dt;
+    errorSumH += errorH * dt;
 
     speedX = Auton.kp * errorX + Auton.ki * errorSumX + Auton.kd * errorRateX;
     speedY = Auton.kp * errorY + Auton.ki * errorSumY + Auton.kd * errorRateY;
+    speedH = Auton.kpH * errorH + Auton.kiH * errorSumH + Auton.kdH * errorRateH;
     lastTimestamp = Timer.getFPGATimestamp();
     lastErrorX = errorX;
     lastErrorY = errorY;
+    lastErrorH = errorH;
 
     double xVelocity   = Math.pow(speedX, 3);
     double yVelocity   = Math.pow(speedY, 3);
-    //velocidade do giro
-    double angVelocity = Math.pow(0, 3);
+    double angVelocity = Math.pow(speedH, 3);
     
   
     // Drive using raw values.

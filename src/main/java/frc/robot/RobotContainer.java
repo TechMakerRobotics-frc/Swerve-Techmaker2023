@@ -13,13 +13,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ResetShoot;
 import frc.robot.commands.SetShoot;
-import frc.robot.commands.Auto.Auto3Notes;
-import frc.robot.commands.swervedrive.auto.MoveXY;
-import frc.robot.commands.swervedrive.auto.MoveXYHeading;
-//import frc.robot.commands.swervedrive.MoveAuto.AutonomoControle;
+import frc.robot.commands.Auto.Auto4Notes;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.IntakeSubsystem;
 //import frc.robot.subsystems.PhotonVision;
@@ -96,7 +92,7 @@ public class RobotContainer
   public Command getAutonomousCommand() {
     
     //return new Auto3Notes(drivebase);
-    return new MoveXYHeading(0,-1,45, drivebase);
+    return new Auto4Notes(drivebase);
   }
 
 

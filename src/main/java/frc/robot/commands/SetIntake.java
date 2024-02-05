@@ -5,17 +5,21 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class SetIntake extends SequentialCommandGroup {
+public class SetIntake extends  InstantCommand {
 
   private final IntakeSubsystem intake = IntakeSubsystem.getInstance();
 
-  public SetIntake() {
-    addCommands(
-      new InstantCommand(()->intake.setMotorPower(IntakeConstants.kPower),intake)
-    );
+  @Override
+  public void initialize() {
+    addRequirements(intake);
+  }
+
+  @Override
+  public void execute() {
+
+      intake.setMotorPower(IntakeConstants.kPower);
   }
 }

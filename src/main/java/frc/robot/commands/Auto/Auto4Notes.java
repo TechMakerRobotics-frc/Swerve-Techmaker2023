@@ -5,11 +5,9 @@
 package frc.robot.commands.Auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.SetIntake;
 import frc.robot.commands.ResetIntake;
-//import frc.robot.commands.Shoot;
-import frc.robot.commands.swervedrive.auto.MoveXYHeading;
+import frc.robot.commands.swervedrive.auto.MoveXY;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class Auto4Notes extends SequentialCommandGroup {
@@ -17,12 +15,10 @@ public class Auto4Notes extends SequentialCommandGroup {
   public Auto4Notes(SwerveSubsystem drivebase) {
 
     addCommands(
-      new MoveXYHeading(-2.1, 0, 0, drivebase),
       new SetIntake(),
-      new WaitCommand(1),
+      new MoveXY(0, 0, 90, drivebase),
       new ResetIntake(),
-      new MoveXYHeading(2.1, 0, 0, drivebase)
-      //new Shoot()
+      new MoveXY(0, 0, 90, drivebase)
       );
   }
 }

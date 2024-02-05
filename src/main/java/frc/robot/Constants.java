@@ -15,13 +15,13 @@ public final class Constants
 
     public static final class Auton
     {
-        public static final double kp = 1.5;
-        public static final double ki = 0.8;
+        public static final double kp = 0.82;
+        public static final double ki = 0.38;
         public static final double kd = 0;
         
         // P = 0.46 - I = 0.17 - D = 0.01 
 
-        public static final double kpH = 0;
+        public static final double kpH = 0.008;
         public static final double kiH = 0;
         public static final double kdH = 0;
 
