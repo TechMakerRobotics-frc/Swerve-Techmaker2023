@@ -6,8 +6,8 @@ package frc.robot.commands.Auto;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.Ingest;
-import frc.robot.commands.ResetIngest;
+import frc.robot.commands.SetIntake;
+import frc.robot.commands.ResetIntake;
 //import frc.robot.commands.Shoot;
 import frc.robot.commands.swervedrive.MoveAuto.MoveXYHeading;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -18,9 +18,9 @@ public class Auto4Notes extends SequentialCommandGroup {
 
     addCommands(
       new MoveXYHeading(-2.1, 0, 0, drivebase),
-      new Ingest(),
+      new SetIntake(),
       new WaitCommand(1),
-      new ResetIngest(),
+      new ResetIntake(),
       new MoveXYHeading(2.1, 0, 0, drivebase)
       //new Shoot()
       );

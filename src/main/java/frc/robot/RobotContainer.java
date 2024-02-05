@@ -15,35 +15,29 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ResetShoot;
-import frc.robot.commands.Shoot;
+import frc.robot.commands.SetShoot;
 import frc.robot.commands.Auto.Auto3Notes;
+import frc.robot.commands.swervedrive.auto.MoveXY;
+import frc.robot.commands.swervedrive.auto.MoveXYHeading;
 //import frc.robot.commands.swervedrive.MoveAuto.AutonomoControle;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeSubsystem;
 //import frc.robot.subsystems.PhotonVision;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer
 {
    private final SwerveSubsystem drivebase;
-   private final Shooter shooter  = Shooter.getInstance();
-   private final Intake intake  = Intake.getInstance();
+   private final ShooterSubsystem shooter  = ShooterSubsystem.getInstance();
+   private final IntakeSubsystem intake  = IntakeSubsystem.getInstance();
    //private final PhotonVision photonVision = new PhotonVision();
    // Subtitua por CommandPS4Controller ou CommandJoystick se necessário.
    CommandXboxController driverXbox = new CommandXboxController(2);
    CommandXboxController driverXboxOperator = new CommandXboxController(0);
 
     
-TeleopDrive closedFieldRel;
-
-
-        double x = 2.7;
-        double y = 2.7;
-
-    // The container for the robot. Contains subsystems, OI devices, and commands.
-    
-    //Trigger tLowBatt = new Trigger(pdp::getLowVoltage);
+  TeleopDrive closedFieldRel;
 
 
     public RobotContainer(){
@@ -56,9 +50,6 @@ TeleopDrive closedFieldRel;
                                   OperatorConstants.LEFT_X_DEADBAND),
         () -> (driverXbox.getRawAxis(3)-driverXbox.getRawAxis(2)), () -> true);
 
-       SmartDashboard.putNumber("Distancia X", x);
-       SmartDashboard.putNumber("Distancia Y", y);
-       SmartDashboard.putNumber("Direcao", 90);
     }
     
     
@@ -80,7 +71,7 @@ TeleopDrive closedFieldRel;
         //driverXbox.b().onTrue(new AutonomoControle(drivebase));
         
         driverXboxOperator.x()
-        .onTrue(new Shoot())
+        .onTrue(new SetShoot())
         .onFalse(new ResetShoot());
         
         driverXboxOperator.y()
@@ -105,6 +96,7 @@ TeleopDrive closedFieldRel;
   public Command getAutonomousCommand() {
     
     return new Auto3Notes(drivebase);
+    //return new MoveXY(0,-1 , drivebase);
   }
 
 
