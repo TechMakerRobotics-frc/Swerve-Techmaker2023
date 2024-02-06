@@ -6,35 +6,35 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveSubsystem;
-import swervelib.SwerveController;
 import frc.robot.Constants.Auton;
 
-public class MoveXY extends CommandBase {
-  /** Creates a new MoveStraight. */
+public class MoveXYHeading extends CommandBase {
+  
   double distanceX, distanceY, heading;
+  
   SwerveSubsystem swerve;
   boolean finish = false;
-  private final SwerveController controller;
+  
   double lastTimestamp;
+  
   double lastErrorX = 0;
   double lastErrorY = 0;
   double lastErrorH = 0;
+  
   double errorSumX = 0;
   double errorSumY = 0;
   double errorSumH = 0;
-  public MoveXY(double distanceX, double distanceY, double heading, SwerveSubsystem swerve) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  
+  public MoveXYHeading(double distanceX, double distanceY, double heading, SwerveSubsystem swerve) {
     this.distanceX = distanceX;
     this.distanceY = distanceY;
     this.heading = heading;
+    this.swerve = swerve;
     SmartDashboard.putNumber("Distance Xi", distanceX);
     SmartDashboard.putNumber("Distance Yi", distanceY);
     SmartDashboard.putNumber("Giro", heading);
-    this.swerve = swerve;
-    this.controller = swerve.getSwerveController();
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     swerve.resetOdometry();
@@ -46,7 +46,6 @@ public class MoveXY extends CommandBase {
 
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     
@@ -105,21 +104,17 @@ public class MoveXY extends CommandBase {
     double yVelocity   = Math.pow(speedY, 3);
     double angVelocity = Math.pow(speedH, 3);
     
-  
-    // Drive using raw values.
     swerve.drive(new Translation2d(xVelocity * swerve.maximumSpeed, yVelocity * swerve.maximumSpeed),
-                 angVelocity * controller.config.maxAngularVelocity,
+                 angVelocity,
                  true ,false);
     
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     swerve.lock();
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return finish;

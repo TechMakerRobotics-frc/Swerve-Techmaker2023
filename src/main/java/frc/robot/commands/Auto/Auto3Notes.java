@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.swervedrive.auto.MoveXY;
+import frc.robot.commands.swervedrive.auto.MoveXYHeading;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -27,15 +27,15 @@ public class Auto3Notes extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new MoveXY(1, 0, 0, drivebase),
+      new MoveXYHeading(1, 0, 0, drivebase),
       new WaitCommand(0.2),
       new InstantCommand(()->shooter.setMotorPower(ShooterConstants.kPower),shooter),
       new WaitCommand(0.5),
       new InstantCommand(()->intake.setMotorPower(IntakeConstants.kPower),intake),
       new WaitCommand(0.5),
-      new MoveXY(1, 0, 0, drivebase),
+      new MoveXYHeading(1, 0, 0, drivebase),
       new WaitCommand(1),
-      new MoveXY(0, 1, 0, drivebase),
+      new MoveXYHeading(0, 1, 0, drivebase),
       new WaitCommand(1),
       new InstantCommand(()->shooter.setMotorPower(0),shooter),
       new WaitCommand(0.5),

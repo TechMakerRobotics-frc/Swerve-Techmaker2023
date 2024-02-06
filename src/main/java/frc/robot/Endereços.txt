@@ -36,3 +36,5 @@ Shooter DOWN = 13
 Pigeon = 17
 
 PDP = 16
+
+Garra = 18

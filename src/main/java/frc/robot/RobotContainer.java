@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ResetShoot;
-import frc.robot.commands.SetShoot;
+import frc.robot.commands.SetShooter;
 import frc.robot.commands.Auto.Auto4Notes;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -57,13 +57,13 @@ public class RobotContainer
 
     // Configura os botões do Xbox.
     void configureBindings(){
-        driverXbox.rightBumper().onTrue(new InstantCommand(drivebase::zeroGyro));
-        driverXbox.leftBumper().onTrue(new InstantCommand(drivebase::resetOdometry));
+        driverXbox.povRight().onTrue(new InstantCommand(drivebase::zeroGyro));
+        driverXbox.povLeft().onTrue(new InstantCommand(drivebase::resetOdometry));
         driverXbox.a().onTrue(new InstantCommand(drivebase::lock));
-        //driverXbox.b().onTrue(new AutonomoControle(drivebase));
+        driverXbox.y().onTrue(new Auto4Notes(drivebase));
         
         driverXboxOperator.x()
-        .onTrue(new SetShoot())
+        .onTrue(new SetShooter())
         .onFalse(new ResetShoot());
         
         driverXboxOperator.y()
@@ -86,9 +86,8 @@ public class RobotContainer
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    
-    //return new Auto3Notes(drivebase);
-    return new Auto4Notes(drivebase);
+
+    return null;
   }
 
 
