@@ -1,6 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands.Auto;
 
@@ -15,10 +12,10 @@ public class Auto4Notes extends SequentialCommandGroup {
   public Auto4Notes(SwerveSubsystem drivebase) {
 
     addCommands(
-      new SetIntake(),
-      new MoveXYHeading(2.1, 0, 0, drivebase),
-      new ResetIntake(),
-      new MoveXYHeading(-2.1, 0, 0, drivebase)
-      );
+      //new SetIntake(),
+      //new MoveXYHeading(0, 0, 0, drivebase),
+      //new ResetIntake(),
+      new MoveXYHeading(0, 0, 172, drivebase)
+    );
   }
 }
