@@ -6,7 +6,6 @@ import java.io.File;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,14 +17,11 @@ import frc.robot.commands.SetShoot;
 import frc.robot.commands.Auto.Auto4Notes;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
 import frc.robot.subsystems.IntakeSubsystem;
-//import frc.robot.subsystems.PhotonVision;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer
 {
    private final SwerveSubsystem drivebase;
-   private final ShooterSubsystem shooter  = ShooterSubsystem.getInstance();
    private final IntakeSubsystem intake  = IntakeSubsystem.getInstance();
    //private final PhotonVision photonVision = new PhotonVision();
    // Subtitua por CommandPS4Controller ou CommandJoystick se necessário.
