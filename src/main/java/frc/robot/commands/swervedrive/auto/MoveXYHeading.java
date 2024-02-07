@@ -112,7 +112,7 @@ public class MoveXYHeading extends CommandBase {
 
   @Override
   public void end(boolean interrupted) {
-    swerve.lock();
+   // swerve.lock();
   }
 
   @Override

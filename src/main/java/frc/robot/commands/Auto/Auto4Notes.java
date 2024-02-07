@@ -12,10 +12,10 @@ public class Auto4Notes extends SequentialCommandGroup {
   public Auto4Notes(SwerveSubsystem drivebase) {
 
     addCommands(
-      //new SetIntake(),
-      //new MoveXYHeading(0, 0, 0, drivebase),
-      //new ResetIntake(),
-      new MoveXYHeading(0, 0, 172, drivebase)
+      new SetIntake(),
+      new MoveXYHeading(-2.1, 0, 0, drivebase),
+      new ResetIntake(),
+      new MoveXYHeading(1, 0, 0, drivebase)
     );
   }
 }

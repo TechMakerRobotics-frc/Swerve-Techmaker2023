@@ -6,6 +6,8 @@ import java.io.File;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -23,28 +25,18 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer
 {
-   private final SwerveSubsystem drivebase;
-   private final IntakeSubsystem intake  = IntakeSubsystem.getInstance();
-   private final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
-   //private final PhotonVision photonVision = new PhotonVision();
-   // Subtitua por CommandPS4Controller ou CommandJoystick se necessário.
-   CommandXboxController driverXbox = new CommandXboxController(2);
-   CommandXboxController driverXboxOperator = new CommandXboxController(0);
-
-   Trigger vibrar = new Trigger(() -> {
-    double valorEixo2 = driverXbox.getRawAxis(2);
-    double valorEixo3 = driverXbox.getRawAxis(3);
-
-    boolean botao2Pressionado = valorEixo2 > 0.5;
-    boolean botao3Pressionado = valorEixo3 > 0.5; 
-
-    boolean ambosPressionados = botao2Pressionado && botao3Pressionado;
-
-    return ambosPressionados;
-});
-
+    private final SwerveSubsystem drivebase;
+    private final IntakeSubsystem intake  = IntakeSubsystem.getInstance();
+    private final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
+    //private final PhotonVision photonVision = new PhotonVision();
+    // Subtitua por CommandPS4Controller ou CommandJoystick se necessário.
+    CommandXboxController driverXbox = new CommandXboxController(0);
+    CommandXboxController driverXboxOperator = new CommandXboxController(1);
+    XboxController xbox = new XboxController(0);
+    Trigger twoBumper = new Trigger(()-> (driverXbox.getRawAxis(2)>0.95 && driverXbox.getRawAxis(3)>0.95 ));  
 
   TeleopDrive closedFieldRel;
+
 
 
     public RobotContainer(){
@@ -76,9 +68,8 @@ public class RobotContainer
         driverXbox.povRight().onTrue(new InstantCommand(drivebase::zeroGyro));
         driverXbox.povLeft().onTrue(new InstantCommand(drivebase::resetOdometry));
         driverXbox.a().onTrue(new InstantCommand(drivebase::lock));
-        driverXbox.y().onTrue(new Auto4Notes(drivebase));
+        //driverXbox.y().onTrue(new Auto4Notes(drivebase));
 
-        vibrar.onTrue(new Auto4Notes(drivebase));
 
 
         driverXboxOperator.x()
@@ -98,6 +89,9 @@ public class RobotContainer
         driverXboxOperator.b()
         .onTrue(new InstantCommand(()->intake.setMotorPower(IntakeConstants.kReversePower),intake))
         .onFalse(new InstantCommand(()->intake.setMotorPower(0),intake));
+
+        twoBumper.onTrue(new InstantCommand(()->xbox.setRumble(RumbleType.kBothRumble, 1)))
+                  .onFalse((new InstantCommand(()->xbox.setRumble(RumbleType.kBothRumble, 0))));
 
        /*  driverXboxOperator.povUp().onTrue(new InstantCommand(()->elevator.setMotorPower(ElevatorConstants.kPower),elevator));
         driverXboxOperator.povDown().onTrue(new InstantCommand(()->elevator.setMotorPower(ElevatorConstants.kReversePower),elevator));

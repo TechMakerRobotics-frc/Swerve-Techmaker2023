@@ -3,7 +3,6 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import swervelib.math.Matter;
  
 public final class Constants
@@ -21,9 +20,9 @@ public final class Constants
         
         // P = 0.46 - I = 0.17 - D = 0.01 
 
-        public static final double kpH = 0.004;
-        public static final double kiH = 0.0000;
-        public static final double kdH = 0.00002;
+        public static final double kpH = 0.0045;
+        public static final double kiH = 0.000007;
+        public static final double kdH = 0.000026;
 
         // P = 0 - I = 0 - D = 0 
 
