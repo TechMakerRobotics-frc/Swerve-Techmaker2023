@@ -5,11 +5,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
+
   private static ShooterSubsystem instance;
   boolean extended = false;
 
@@ -22,6 +24,9 @@ public class ShooterSubsystem extends SubsystemBase {
     //Limpo qualquer configuração  inicial dos modulos
     motorDown.restoreFactoryDefaults();
     motorUp.restoreFactoryDefaults();
+
+    motorDown.setOpenLoopRampRate(ShooterConstants.kRampRate);
+    motorUp.setOpenLoopRampRate(ShooterConstants.kRampRate);
 
     //Configuro para  que o  motor se mantenha estatico quando em 0
     motorDown.setIdleMode(IdleMode.kBrake);
@@ -38,8 +43,13 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     return instance;
   }
-  public void setMotorPower(double forward) {
 
+
+  public void setMotorPower(double forward) {
+    if(forward<ShooterConstants.kMinimalPower)
+    {
+      forward = ShooterConstants.kMinimalPower;
+    }
       motorUp.set(forward);
       motorDown.set(forward);
       motorPower = forward;

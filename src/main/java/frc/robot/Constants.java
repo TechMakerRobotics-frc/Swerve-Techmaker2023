@@ -49,7 +49,8 @@ public final class Constants
         public static final int kIntakeMotor = 14;
         public static final int kReturnTicks = 0;
         public static final double kRampRate = 0;
-        public static final double kPower = 1;
+        public static final double kPower = 0.5;
+        public static final double kPowerShoot = 1;
         public static final double kReversePower = -0.3;
         public static final double kPowerWait = 0;
 
@@ -63,8 +64,22 @@ public final class Constants
             public static final double kPower = 1;
             public static final double kReversePowerDown = -0.3;
             public static final double kReversePower = -0.3;
+            public static final double kWaitBeforeShoot = 1.0;
+            public static final double kRampRate = 0.5;
+            public static final double kMinimalPower = 0;
         
           } 
-          
+
+
+    public static class ElevatorConstants {
+
+        public static final int kElevatorLeftMotor = 19;
+            public static final int kElevatorRightMotor = 20;
+            public static final double kPowerDown = -1;
+            public static final double kPowerUp = 1;
+            public static final double kGearRatio = 0;
+            public static final double kMinimalPower = 0;
+        
+    }          
 } 
 

@@ -20,8 +20,8 @@ public class SetShooter extends SequentialCommandGroup {
 
     addCommands(
       new InstantCommand(()->shooter.setMotorPower(ShooterConstants.kPower),shooter),
-      new WaitCommand(0.5),
-      new InstantCommand(()->intake.setMotorPower(IntakeConstants.kPower),intake)
+      new WaitCommand(ShooterConstants.kWaitBeforeShoot),
+      new InstantCommand(()->intake.setMotorPower(IntakeConstants.kPowerShoot),intake)
     );
   }
 
