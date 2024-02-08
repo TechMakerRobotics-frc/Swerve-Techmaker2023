@@ -12,16 +12,21 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.InsideClaw;
 import frc.robot.commands.IntakeSensor;
+import frc.robot.commands.OutsideClaw;
 import frc.robot.commands.ResetShoot;
 import frc.robot.commands.SetShooter;
 import frc.robot.commands.Auto.Auto4Notes;
+import frc.robot.commands.ElevatorCommands.DownElevator;
+import frc.robot.commands.ElevatorCommands.BrakeDownElevator;
+import frc.robot.commands.ElevatorCommands.BrakeUpElevator;
+import frc.robot.commands.ElevatorCommands.UpElevator;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
-import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -31,7 +36,7 @@ public class RobotContainer
     private final SwerveSubsystem drivebase;
     private final IntakeSubsystem intake  = IntakeSubsystem.getInstance();
     private final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
-    private final ElevatorSubsystem elevator = ElevatorSubsystem.getInstance();
+    private final ClawSubsystem claw = ClawSubsystem.getInstance();
     //private final PhotonVision photonVision = new PhotonVision();
     
     // Subtitua por CommandPS4Controller ou CommandJoystick se necessário.
@@ -73,7 +78,6 @@ public class RobotContainer
         driverXbox.povRight().onTrue(new InstantCommand(drivebase::zeroGyro));
         driverXbox.povLeft().onTrue(new InstantCommand(drivebase::resetOdometry));
         driverXbox.a().onTrue(new InstantCommand(drivebase::lock));
-        //driverXbox.y().onTrue(new Auto4Notes(drivebase));
 
 
 
@@ -93,13 +97,26 @@ public class RobotContainer
         .onTrue(new InstantCommand(()->intake.setMotorPower(IntakeConstants.kReversePower),intake))
         .onFalse(new InstantCommand(()->intake.setMotorPower(0),intake));
 
-        twoBumper.onTrue(new InstantCommand(()->xbox.setRumble(RumbleType.kBothRumble, 1)))
-                  .onFalse((new InstantCommand(()->xbox.setRumble(RumbleType.kBothRumble, 0))));
+        twoBumper
+        .onTrue(new InstantCommand(()->xbox.setRumble(RumbleType.kBothRumble, 1)))
+        .onFalse((new InstantCommand(()->xbox.setRumble(RumbleType.kBothRumble, 0))));
 
-       driverXboxOperator.povUp().onTrue(new InstantCommand(()->elevator.setMotorPower(ElevatorConstants.kPowerUp),elevator));
-        driverXboxOperator.povDown().onTrue(new InstantCommand(()->elevator.setMotorPower(ElevatorConstants.kPowerDown),elevator));
-        driverXboxOperator.povUp().onFalse(new InstantCommand(()->elevator.setMotorPower(0),elevator));
-        driverXboxOperator.povDown().onFalse(new InstantCommand(()->elevator.setMotorPower(0),elevator));
+        driverXboxOperator.povUp()
+        .onTrue(new UpElevator())
+        .onFalse(new BrakeUpElevator());
+        
+        driverXboxOperator.povDown()
+        .onTrue(new DownElevator())
+        .onFalse(new BrakeDownElevator());
+
+
+        driverXboxOperator.povRight()
+        .onTrue(new InsideClaw())
+        .onFalse(new InstantCommand(()->claw.setMotorPower(0),claw));
+        
+        driverXboxOperator.povLeft()
+        .onTrue(new OutsideClaw())
+        .onFalse(new InstantCommand(()->claw.setMotorPower(0),claw));
         
         drivebase.setDefaultCommand(closedFieldRel);
 
