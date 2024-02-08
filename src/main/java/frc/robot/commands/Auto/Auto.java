@@ -7,9 +7,9 @@ import frc.robot.commands.swervedrive.auto.MoveXYHeading;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class Autonomo extends SequentialCommandGroup {
+public class Auto extends SequentialCommandGroup {
 
-  public Autonomo (SwerveSubsystem drivebase){
+  public Auto (SwerveSubsystem drivebase){
   {
       addCommands(
   new MoveXYHeading(2.1, 0, 0, drivebase),

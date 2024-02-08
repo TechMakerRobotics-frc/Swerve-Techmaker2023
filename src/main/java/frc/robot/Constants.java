@@ -67,18 +67,17 @@ public final class Constants
             public static final double kWaitBeforeShoot = 1.0;
             public static final double kRampRate = 0.5;
             public static final double kMinimalPower = 0;
-        
           } 
 
 
     public static class ElevatorConstants {
 
         public static final int kElevatorLeftMotor = 19;
-            public static final int kElevatorRightMotor = 20;
-            public static final double kPowerDown = -1;
-            public static final double kPowerUp = 1;
-            public static final double kGearRatio = 0;
-            public static final double kMinimalPower = 0;
+        public static final int kElevatorRightMotor = 20;
+        public static final double kPowerDown = -1;
+        public static final double kPowerUp = 1;
+        public static final double kEncoderTicksTop = 2000;
+        public static final double kMinimalPower = 0;
         
     }          
 

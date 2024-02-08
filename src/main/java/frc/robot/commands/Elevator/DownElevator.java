@@ -2,24 +2,25 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Elevator;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.subsystems.ElevatorSubsystem;
 
-public class IntakeSensor extends CommandBase {
-  /** Creates a new IntakeSensor. */
-  IntakeSubsystem intake = IntakeSubsystem.getInstance();
-  public IntakeSensor() {
+public class DownElevator extends CommandBase {
+  ElevatorSubsystem elevator = ElevatorSubsystem.getInstance();
+  public DownElevator() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake);
+    addRequirements(elevator);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.setMotorPower(IntakeConstants.kPower);
+    if(!elevator.getEndOfCourse()){
+      elevator.setMotorPower(ElevatorConstants.kPowerDown);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -29,12 +30,12 @@ public class IntakeSensor extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.setMotorPower(0);
+    elevator.setMotorPower(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.getSensor();
+    return elevator.getEndOfCourse();
   }
 }

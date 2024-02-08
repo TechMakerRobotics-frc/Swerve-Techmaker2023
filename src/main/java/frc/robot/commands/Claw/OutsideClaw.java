@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Claw;
 
 import frc.robot.Constants.ClawConstants;
 import frc.robot.subsystems.ClawSubsystem;

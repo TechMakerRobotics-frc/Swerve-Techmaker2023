@@ -6,7 +6,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
@@ -21,6 +21,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   //dois encoders, um de cada motor
   RelativeEncoder leftEncoder;
   RelativeEncoder rightEncoder;
+  DigitalInput endOfCourse = new DigitalInput(1);
   /** Creates a new arm. */
   public ElevatorSubsystem() {
     
@@ -29,8 +30,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     motorRight.restoreFactoryDefaults();
 
     //Configuro para  que o  motor se mantenha estatico quando em 0
-    motorLeft.setIdleMode(IdleMode.kCoast);
-    motorRight.setIdleMode(IdleMode.kCoast);
+    motorLeft.setIdleMode(IdleMode.kBrake);
+    motorRight.setIdleMode(IdleMode.kBrake);
     
     //Inverto o motor da esquerda para que girem juntos
     motorLeft.setInverted(true);
@@ -44,22 +45,15 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
   public static ElevatorSubsystem getInstance() {
     if (instance == null) {
-        instance = new ElevatorSubsystem();
+      instance = new ElevatorSubsystem();
     }
     return instance;
 }
   //Função principal que movimenta o braço para frente(+) e  para tras(-)
-  public void setMotorPower(double Up) {
-    SmartDashboard.putNumber("Elevator Potencia (%)", Up * 100.0);
-      motorRight.set(Up);
-      motorLeft.set(Up);
-    
-
-
-
-      
-    
-    
+  public void setMotorPower(double power) {
+    SmartDashboard.putNumber("Elevator Potencia (%)", power * 100.0);
+    motorRight.set(power);
+    motorLeft.set(power);
   }
 
   //Reseta os valores dos encoders, para ter a referencia atual
@@ -70,7 +64,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   
   //Função  que captura  os encoders, fazendo uma media dos dois lados e dividindo pela redução
   public double getEncoder(){
-    return (((rightEncoder.getPosition()+leftEncoder.getPosition())/2)*ElevatorConstants.kGearRatio);
+    return (((rightEncoder.getPosition()+leftEncoder.getPosition())/2));
+  }
+  public boolean getEndOfCourse(){
+    return endOfCourse.get();
   }
   
   @Override

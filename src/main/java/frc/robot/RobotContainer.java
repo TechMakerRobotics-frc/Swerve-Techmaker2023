@@ -12,20 +12,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.InsideClaw;
-import frc.robot.commands.IntakeSensor;
-import frc.robot.commands.OutsideClaw;
-import frc.robot.commands.ResetShoot;
-import frc.robot.commands.SetShooter;
-import frc.robot.commands.Auto.Auto4Notes;
-import frc.robot.commands.ElevatorCommands.DownElevator;
-import frc.robot.commands.ElevatorCommands.BrakeDownElevator;
-import frc.robot.commands.ElevatorCommands.BrakeUpElevator;
-import frc.robot.commands.ElevatorCommands.UpElevator;
+import frc.robot.commands.Auto.Auto5Heading;
+import frc.robot.commands.Claw.InsideClaw;
+import frc.robot.commands.Claw.OutsideClaw;
+import frc.robot.commands.Elevator.DownElevator;
+import frc.robot.commands.Elevator.UpElevator;
+import frc.robot.commands.Intake.IntakeSensor;
+import frc.robot.commands.Shooter.StopShoot;
+import frc.robot.commands.Shooter.StartShooter;
 import frc.robot.commands.swervedrive.drivebase.TeleopDrive;
+
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -43,7 +43,7 @@ public class RobotContainer
     CommandXboxController driverXbox = new CommandXboxController(0);
     CommandXboxController driverXboxOperator = new CommandXboxController(1);
     XboxController xbox = new XboxController(0);
-    Trigger twoBumper = new Trigger(()-> (driverXbox.getRawAxis(2)>0.95 && driverXbox.getRawAxis(3)>0.95 ));  
+    Trigger twoBumper = new Trigger(()-> (driverXbox.getRawAxis(2)>0.85 && driverXbox.getRawAxis(3)>0.85 ));  
 
   TeleopDrive closedFieldRel;
 
@@ -75,15 +75,18 @@ public class RobotContainer
 
     // Configura os botões do Xbox.
     void configureBindings(){
+
+        //Controle do piloto
+
         driverXbox.povRight().onTrue(new InstantCommand(drivebase::zeroGyro));
         driverXbox.povLeft().onTrue(new InstantCommand(drivebase::resetOdometry));
         driverXbox.a().onTrue(new InstantCommand(drivebase::lock));
 
-
+        //Controle do operador:
 
         driverXboxOperator.x()
-        .onTrue(new SetShooter())
-        .onFalse(new ResetShoot());
+        .onTrue(new StartShooter())
+        .onFalse(new StopShoot());
         
         driverXboxOperator.y().onTrue(new IntakeSensor());
         
@@ -97,17 +100,11 @@ public class RobotContainer
         .onTrue(new InstantCommand(()->intake.setMotorPower(IntakeConstants.kReversePower),intake))
         .onFalse(new InstantCommand(()->intake.setMotorPower(0),intake));
 
-        twoBumper
-        .onTrue(new InstantCommand(()->xbox.setRumble(RumbleType.kBothRumble, 1)))
-        .onFalse((new InstantCommand(()->xbox.setRumble(RumbleType.kBothRumble, 0))));
-
         driverXboxOperator.povUp()
-        .onTrue(new UpElevator())
-        .onFalse(new BrakeUpElevator());
+        .onTrue(new UpElevator());
         
         driverXboxOperator.povDown()
-        .onTrue(new DownElevator())
-        .onFalse(new BrakeDownElevator());
+        .onTrue(new DownElevator());
 
 
         driverXboxOperator.povRight()
@@ -117,6 +114,11 @@ public class RobotContainer
         driverXboxOperator.povLeft()
         .onTrue(new OutsideClaw())
         .onFalse(new InstantCommand(()->claw.setMotorPower(0),claw));
+
+        
+        twoBumper
+        .onTrue(new InstantCommand(()->xbox.setRumble(RumbleType.kBothRumble, 1)))
+        .onFalse((new InstantCommand(()->xbox.setRumble(RumbleType.kBothRumble, 0))));
         
         drivebase.setDefaultCommand(closedFieldRel);
 
@@ -133,7 +135,7 @@ public class RobotContainer
    */
   public Command getAutonomousCommand() {
 
-    return new Auto4Notes(drivebase);
+    return new Auto5Heading(drivebase);
   }
 
 
